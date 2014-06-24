@@ -1,0 +1,18 @@
+/*!
+ * Esteve Avilés Blog v1.0.0 (http://getbootstrap.com)
+ * Copyright 2014 
+ */
+
+body {
+	margin-top: 50px;
+	margin-bottom: 60px;
+}
+
+.blog-header {
+	margin-bottom: 50px;
+}
+
+.blog-main-title {
+  font-weight: bolder;
+  color: red;
+}

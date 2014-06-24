@@ -1,1 +1,128 @@
-Hello World
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Technology blog to share knowledge and opinions">
+    <meta name="author" content="Esteve Avilés from Barcelona">
+    <title>Esteve Avilés Technology blog</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="css/blog.css">
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+      <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+  </head>
+  
+  <body>
+     <div class="container">
+      <div class="blog-header">
+        <h3 class="blog-main-title">ESTEVE AVILÉS</h3>
+        <p class="text-muted">Technology Blog: Thoughts about software development technology</p>
+      </div>
+
+      <div class="row">
+        
+        <!-- Left Column-->
+        <div class="col-md-8">
+          <h2>How to install Liferay 6.2.1 on a JBoss EAP 6.2</h2>
+          <hr/>
+          <p><span class="label label-default"><time datetime="2014-06-24">June 2014</time></span></p>
+
+          <p>I will try to explain how to install Liferay Portal 6.2 in a JBoss EAP 6.2 application server. I have done this exercice as a newby in Liferay portal environment and to test this platform as a dynamic content web server.</p>
+          <p>First of all, let's describe exactly the environment:
+            <ul>
+              <li>SO: Windows 7, 32 bits</li>
+              <li>JDK: 1.7.0_45</li>
+              <li>Maven: 3.1.1</li>
+              <li>Liferay Portal: 6.2.1</li>
+              <li>Application server: JBoss EAP 6.2 in standalone mode</li>
+              <li>Database: Oracle XE 11g</li>
+            </ul>
+          </p>
+          <p>First of all I am going to use Maven for Liferay related issues. Liferay is currently, I assure that, based on Apache ANT as a build tool. I don't know why but they do try to explain it many times.</p>
+
+          
+          <h4>Install Oracle XE</h4>
+          <p>Download and Install Oracle XE from Oracle and run the following script as SYS just to enable a new SCHEME:</p>
+          <script src="https://gist.github.com/esteveavi/84df92579f673e8af8e4.js"></script>
+
+          <h4>Configure JBoss EAP 6.2</h4>
+          <p>Edit JBOSS_HOME/bin/standalone.conf.bat so that:</p>
+          <script src="https://gist.github.com/esteveavi/22ceb48ef05e2717403b.js"></script>
+
+          <h4>Add a JBoss Module for Liferay</h4>
+          <p>Add a new JBoss Module for Liferay. Create a new folder structure under <code>JBOSS_HOME/modules/</code>:
+          <pre>com\liferay\portal\main</pre>
+          Create a new file called <code>module.xml</code> with the following content:
+          </p>
+          <script src="https://gist.github.com/esteveavi/806075de16f86469f3a9.js"></script>
+          Download the following jar files from <code>mvnrepository</code> and save them at the folder as module.xml:
+          <p>
+            <ul>
+              <li>portal-service-6.2.1.jar from <a href="http://mvnrepository.com/artifact/com.liferay.portal/portal-service/6.2.1">http://mvnrepository.com/artifact/com.liferay.portal/portal-service/6.2.1</a></li>
+              <li>portlet-api-2.0.jar from <a href="http://mvnrepository.com/artifact/javax.portlet/portlet-api/2.0">http://mvnrepository.com/artifact/javax.portlet/portlet-api/2.0</a></li>
+            </ul>
+          </p>
+
+          <h4>Edit JBoss standalone.xml</h4>
+          <p>Edit JBoss Standalone.xml in <code>JBOSS_HOME/standalone/configuration/standalone.xml</code></p>
+          <script src="https://gist.github.com/esteveavi/3b7b90481aacd68ad376.js"></script>
+
+          <h4>Install Lifray portal</h4>
+          <p>Download the Liferay Web application <code>portal-web-6.2.1.war</code> from the following Maven repo location: <a href="http://mvnrepository.com/artifact/com.liferay.portal/portal-web/6.2.1">http://mvnrepository.com/artifact/com.liferay.portal/portal-web/6.2.1</a></p>
+          <p>Create a new folder called <code>ROOT.war</code> under <code> JBOSS_HOME/standalone/deployments/</code>. ROOT.war is the convention that uses Liferay to deploy its portal Web Application</p>
+          <p>Uncompress the content of <code>portal-web-6.2.1.war</code> into the  <code>ROOT.war</code> folder.</p>
+
+          <p>Once uncompressed create a new file under <code>ROOT.war/WEB-INF/classes</code> called <code>portal-ext.properties</code> with the following content:
+          <pre>jdbc.default.jndi.name=jdbc/LiferayPool</pre>
+          This tells Liferay to use the Oracle pool declared in JBoss <code>standalone.xml</code>
+          </p>
+
+
+          <h4>Start JBoss</h4>
+          <p>Run the following command in CLI:</p>
+          <pre>JBOSS_HOME/bin/standalone.bat</pre>
+          <p>This may take several minutes to start the first time as it must create the hole database schema.</p>
+
+          <h4>References</h4>
+          <a href="https://www.liferay.com/es/documentation/liferay-portal/6.2/development/-/ai/developing-plugins-using-maven-liferay-portal-6-2-dev-guide-02-en">Developing Liferay plugins with maven.</a>
+
+        </div>
+        <!-- Right Column -->
+        <div class="col-md-3 col-md-offset-1">
+          <div class="well well-sm">
+             <h4>ABOUT</h4>
+            <p class="text-muted">I am currently workink at TMB (Transports Metropolitans de Barcelona) as a Product Manager responsible of all Internet related software products in the company.</p>
+          </div>
+          <h4>TAGS</h4>
+          <p class="text-muted"><span class="glyphicon glyphicon-tag"></span> Liferay</p>
+          <p class="text-muted"><span class="glyphicon glyphicon-tag"></span> JBoss</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+
+  </body>
+</html>
